@@ -1,5 +1,5 @@
 const allowedOrigins = [
-    'http://asdfasdf.sk',
+    'http://localhost:8080',
 ]
 
 export default allowedOrigins;
