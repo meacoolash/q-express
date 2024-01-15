@@ -1,14 +1,19 @@
 import express, { Express, Request, Response } from "express";
 import router from './routes/root';
 import path from 'path';
-import { logger } from './middleware/logger';
+import { logger, logEvents } from './middleware/logger';
 import errorHandler from "./middleware/errorHandler";
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import corsOptions from "./config/corsOptions";
-
+import connectDB from "./config/dbConn";
+import mongoose from "mongoose";
+import dotenv from 'dotenv'; 
 const app: Express = express();
 const port = process.env.PORT || 8080;
+dotenv.config()
+
+connectDB();
 
 app.use(logger);
 
@@ -35,6 +40,16 @@ app.all('*', (req: Request, res: Response) => {
 
 app.use(errorHandler);
 
-app.listen(port, () => {
-  console.log(`now listening on port ${port}`);
-});
+mongoose.connection.once('open', () => {
+  console.log('MongoDB connection ready');
+  app.listen(port, () => {
+    console.log(`Listening on port ${port}`);
+  });
+})
+
+mongoose.connection.on('error', (err) => {
+  console.error(err);
+  logEvents(err, 'mongoError.log')
+})
+
+
