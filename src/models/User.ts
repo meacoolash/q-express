@@ -14,10 +14,10 @@ const UserSchema = new mongoose.Schema({
     type: String,
     default: "Common",
   }],
-  active: [{
+  active: {
     type: Boolean,
     default: true,
-  }],
+  },
 });
 
 export default mongoose.model("User", UserSchema);

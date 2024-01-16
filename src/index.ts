@@ -1,6 +1,8 @@
 import express, { Express, Request, Response } from "express";
-import router from './routes/root';
 import path from 'path';
+import rootRouter from './routes/rootRouter';
+import userRouter from "./routes/userRouter";
+import contactRouter from "./routes/contactRouter";
 import { logger, logEvents } from './middleware/logger';
 import errorHandler from "./middleware/errorHandler";
 import cookieParser from 'cookie-parser';
@@ -24,7 +26,10 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.use('/', express.static(path.join(__dirname, 'public')));
-app.use('/', router);
+
+app.use('/', rootRouter);
+app.use('/users', userRouter);
+app.use('/contacts', contactRouter);
 
 app.all('*', (req: Request, res: Response) => {
   res.status(404);
@@ -36,7 +41,6 @@ app.all('*', (req: Request, res: Response) => {
     res.type('txt').send('Not found TXT');
   }
 });
-
 
 app.use(errorHandler);
 
